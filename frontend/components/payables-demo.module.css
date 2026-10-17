@@ -85,3 +85,6 @@
 }
 
 .readyTag{font-size:10px;white-space:nowrap}
+
+.lines .remainderFlow{stroke:#cdb4ff;stroke-width:3;stroke-dasharray:12 14;animation:flow 1s linear infinite}
+@media(prefers-reduced-motion:reduce){.lines .remainderFlow{animation:none!important}}

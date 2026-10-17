@@ -1,18 +1,52 @@
 {
   "enabled": true,
-  "protocolVersion": 4,
+  "protocolVersion": 5,
+  "financingModel": "partial-loan",
   "demoOnly": true,
   "network": "monadTestnet",
   "chainId": 10143,
-  "protocol": "0xa932a00d497d0270b1186a97a911dc05a8c37d7a",
+  "protocol": "0x177da373b7609c5556b30f2d687fbac2d3c2db53",
   "usdc": "0x751e9670cbd7071f66ea654b34410deac24da898",
   "relayer": "0x5BC09c33919073017Ff0D56D71bC3eA8056090D4",
   "source": "0x53703943eA40A06F6C71F60da13d4F36758C2c19",
-  "supplier": "0x7157F8c8646A09D9ac2558050df6bb041a357600",
-  "buyer": "0x517a252a730293B24A9C25b8413c5490BB470efE",
-  "lender": "0x4Fc850Bbf7D4c5C990B03fD7d7392580FfBEc149",
-  "deploymentBlock": "71196893",
-  "deploymentBlockHash": "0x5b77b4d3a2d3c183c25e9dc2002c3c477ba655da1ce37e8fe1f6fbde8bff6703",
+  "buyer": "0xe0B6Cb28FCF4829349E97B36863370622987dE92",
+  "supplier": "0x2f57819B500cd1E1Ff8F17Ec47E0d282F126B330",
+  "lender": "0x61DcC21Eda7de3650c5B0Ba09746C98d85B79963",
+  "deploymentBlock": "71788607",
+  "deploymentBlockHash": "0xcee15e239cef6a75baf950aba18404cc5d3034415712c4180b73980ff26a3873",
   "rpcUrl": "https://rpc-testnet.monadinfra.com",
-  "preparations": []
+  "preparations": [
+    {
+      "label": "fund-buyer",
+      "hash": "0x99f98c94b46c8739602f45c75b82aa8348fc399b282776aa287e1f7157b50895"
+    },
+    {
+      "label": "fund-supplier",
+      "hash": "0x79c52d218f96d91c2a407bc0c1056aba937197f26fec989ba52d4767a1e1a5d3"
+    },
+    {
+      "label": "fund-lender",
+      "hash": "0x520a575689e49a2207725cca8d96ccbb860e8810c1afb393ba479503a8b9e883"
+    },
+    {
+      "label": "deploy-protocol",
+      "hash": "0x2b05b18c0dec3d690be0def9220a5223d428cd3a2d16c1876adeb6b1a2669560"
+    },
+    {
+      "label": "mint-buyer",
+      "hash": "0x432de5587b4770c8177942f9f6a96160087482f21d55fb36395245fc40f30d27"
+    },
+    {
+      "label": "approve-buyer",
+      "hash": "0xd9e551640998d3cfd13a073382652ea085bb13be2c5e503dca76c3b8dbe070a3"
+    },
+    {
+      "label": "mint-lender",
+      "hash": "0x0fa2e132d623b6ad2fdb3cc4d3aa4e1645d3f829cde20a03859904b30de47570"
+    },
+    {
+      "label": "approve-lender",
+      "hash": "0xc9f5928cbefa9ff02f0511d826a6c59d26f05243d7849f36b69c7282004f6307"
+    }
+  ]
 }

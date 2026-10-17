@@ -44,7 +44,8 @@
     "build:pitch": "node scripts/build-pitch.mjs",
     "test:profiles": "node --test scripts/demo-profiles.test.mjs",
     "preview:pitch": "node scripts/preview-pitch.mjs",
-    "test:bootstrap": "node scripts/bootstrap-integration.mjs"
+    "test:bootstrap": "node scripts/bootstrap-integration.mjs",
+    "setup:showcase:loan": "node scripts/setup-showcase-loan.mjs"
   },
   "engines": {
     "node": ">=22"
