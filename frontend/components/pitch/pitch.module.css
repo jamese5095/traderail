@@ -382,5 +382,5 @@
 }
 
 /* Bilingual branding for the published project introduction. */
-.caseWordmark .chineseWordmark { display: inline-block; font-size: .48em; letter-spacing: .04em; margin-right: .38em; vertical-align: .12em; }
+.caseWordmark .chineseWordmark { display: inline-block; font-size: 1em; letter-spacing: .02em; margin-right: .24em; vertical-align: baseline; }
 .miniWordmark .miniChineseWordmark { display: block; font-size: .45em; line-height: 1.4; letter-spacing: .08em; color: var(--accent); }
