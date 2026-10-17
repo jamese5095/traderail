@@ -31,3 +31,11 @@ deployments/*rehearsal*.json
 deployments/*receipt*.json
 deployments/*preflight*.json
 *.tmp
+
+# Isolated generated profiles, accounts, chain state and static exports.
+.traderail/
+site/.next/
+site/out/
+site/public/
+
+.next-*/

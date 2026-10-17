@@ -26,7 +26,7 @@ interface LocaleContextValue {
 }
 const Context = createContext<LocaleContextValue | null>(null);
 
-export function LocaleProvider({ children }: { children: React.ReactNode }) {
+export function LocaleProvider({ children, presentation=false }: { children: React.ReactNode; presentation?:boolean }) {
   // Match the server's first render, then restore this app's own preference.
   const [locale, updateLocale] = useState<Locale>('en');
   const [ready, setReady] = useState(false);
@@ -40,8 +40,8 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   }, []);
   useEffect(() => {
     document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
-    document.title = window.location.pathname==='/pitch'?(locale==='zh'?'TradeRail · 项目介绍':'TradeRail · Project Pitch'):window.location.pathname==='/evidence'?(locale==='zh'?'TradeRail · 业务事件与链上证据':'TradeRail · Business events and onchain evidence'):locale === 'zh' ? 'TradeRail · Monad 贸易结算' : 'TradeRail · Trade Settlement on Monad';
-  }, [locale]);
+    document.title = presentation||window.location.pathname==='/pitch'?(locale==='zh'?'TradeRail · 项目介绍':'TradeRail · Project Pitch'):window.location.pathname==='/evidence'?(locale==='zh'?'TradeRail · 业务事件与链上证据':'TradeRail · Business events and onchain evidence'):locale === 'zh' ? 'TradeRail · Monad 贸易结算' : 'TradeRail · Trade Settlement on Monad';
+  }, [locale,presentation]);
   const setLocale = useCallback((next: Locale) => {
     updateLocale(next);
     setHasPreference(true);

@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { ArrowLeft, ArrowRight, ArrowUpRight, Boxes, Grid2X2, Pause, Play, Presentation, ScanLine, ShieldCheck, X } from 'lucide-react';
-import { railChain as chain, railLocal as isLocal } from '@backend/config/traderail';
 import { useLocale } from '@/lib/i18n/locale';
 import styles from './pitch.module.css';
 
@@ -15,7 +14,7 @@ const fromHash = () => {
   return requested >= 1 && requested <= chapters.length ? requested - 1 : 0;
 };
 
-export function PitchDeck() {
+export function PitchDeck({published=false,assetBase='',networkName='Monad Testnet'}:{published?:boolean;assetBase?:string;networkName?:string}) {
   const { t, locale, setLocale, ready, hasPreference } = useLocale();
   const [page, setPage] = useState(0);
   const [overview, setOverview] = useState(false);
@@ -104,9 +103,11 @@ export function PitchDeck() {
     return () => window.removeEventListener('keydown', keyboard);
   }, [page, overview, navigate]);
 
+  const demoHref=published?'https://github.com/jamese5095/traderail#本地运行':'/';
+  const demoLabel=published?'Run the demo':'Enter the live demo';
   const DemoLinks = () => <div className={styles.actions}>
-    <Link className={styles.primary} href="/">{t("Enter the live demo")}<ArrowUpRight size={17} /></Link>
-    <Link className={styles.textLink} href="/?evidence=1">{t('Open chain evidence')}<ArrowUpRight size={15} /></Link>
+    <Link className={styles.primary} href={demoHref}>{t(demoLabel)}<ArrowUpRight size={17} /></Link>
+    <Link className={styles.textLink} href={published?'https://github.com/jamese5095/traderail#部署与独立核验':'/?evidence=1'}>{t(published?'View the source':'Open chain evidence')}<ArrowUpRight size={15} /></Link>
   </div>;
   const Flow = ({ items, label, raw = false }: { items: string[]; label?: string; raw?: boolean }) => <div className={styles.flow} aria-label={label}>{items.map((item, index) => <div className={styles.flowItem} key={item}><span>{raw ? item : t(item)}</span>{index < items.length - 1 && <ArrowRight size={18} aria-hidden="true" />}</div>)}</div>;
   const Note = ({ children }: { children: ReactNode }) => <p className={styles.note}>{children}</p>;
@@ -117,13 +118,13 @@ export function PitchDeck() {
         <div className={styles.caseIntro}><span className={styles.kicker}>{t("CROSS-BORDER SUPPLY CHAINS · PROGRAMMABLE SETTLEMENT")}</span><h1 className={styles.caseWordmark}>TradeRail<span>.</span></h1><h2>{t(headlines[0])}</h2></div>
         <p className={styles.positioning}>{t("Bring existing supply chain finance settlement onto Monad.")}</p>
         <div className={styles.painGrid}><div className={styles.editorialBlock}><span className={styles.index}>{t("01 / Physical flow")}</span><h3>{t("Goods already leave a record")}</h3><p>{t("Scanning, warehouse and delivery events enter enterprise systems, making order progress traceable.")}</p></div><div className={styles.editorialBlock}><span className={styles.index}>{t("02 / Capital flow")}</span><h3>{t("Capital still has to wait")}</h3><p>{t("Loans, payments and receipt checks cross multiple systems, leaving a gap between business progress and usable funds.")}</p></div><div className={styles.editorialBlock}><span className={styles.index}>{t("03 / TradeRail")}</span><h3>{t("Connect business to settlement")}</h3><p>{t("Turn authorized business events into executable fund instructions, with allocation and confirmed receipt sync.")}</p></div></div>
-        <div className={styles.actions}><button className={styles.primary} onClick={() => navigate(1)}>{t("Start with the business records")}<ArrowRight size={17}/></button><Link className={styles.textLink} href="/">{t("Enter the live demo")}<ArrowUpRight size={17}/></Link></div>
+        <div className={styles.actions}><button className={styles.primary} onClick={() => navigate(1)}>{t("Start with the business records")}<ArrowRight size={17}/></button><Link className={styles.textLink} href={demoHref}>{t(demoLabel)}<ArrowUpRight size={17}/></Link></div>
         <Note>{t("The demo verifies two-party payment and optional three-party financing with real test-chain transfers. Enterprise events come from a mock ERP.")}</Note>
       </>;
       case 1: return <>
         <div className={styles.heading}><span className={styles.kicker}>{t("BEFORE SETTLEMENT · TRUSTED BUSINESS DATA")}</span><h2>{t(headlines[1])}</h2><p className={styles.backgroundSubtitle}>{t("Warehouse scans and delivery events can feed ERP or consortium records.")}</p></div>
         <div className={styles.backgroundGrid}>
-          <section className={styles.backgroundPanel}><span className={styles.index}>{t("01 / Physical operations")}</span><h3>{t("Capture the warehouse event")}</h3><figure className={styles.warehouseFigure}><img src="/images/warehouse-scanning.jpg" width="600" height="600" alt={t("A warehouse worker scans a goods label with a Zebra handheld terminal.")} loading="eager"/><figcaption><span>{t("Warehouse barcode capture")}</span><a href="https://www.waveform.com/products/zebra-mc9450" target="_blank" rel="noreferrer">{t("Photo: Waveform / Zebra")}<ArrowUpRight size={11}/></a></figcaption></figure><div className={styles.warehouseEvents}><span>{t("Receiving")}</span><ArrowRight size={13}/><span>{t("Dispatch")}</span><ArrowRight size={13}/><span>{t("Delivery")}</span></div></section>
+          <section className={styles.backgroundPanel}><span className={styles.index}>{t("01 / Physical operations")}</span><h3>{t("Capture the warehouse event")}</h3><figure className={styles.warehouseFigure}><img src={`${assetBase}/images/warehouse-scanning.jpg`} width="600" height="600" alt={t("A warehouse worker scans a goods label with a Zebra handheld terminal.")} loading="eager"/><figcaption><span>{t("Warehouse barcode capture")}</span><a href="https://www.waveform.com/products/zebra-mc9450" target="_blank" rel="noreferrer">{t("Photo: Waveform / Zebra")}<ArrowUpRight size={11}/></a></figcaption></figure><div className={styles.warehouseEvents}><span>{t("Receiving")}</span><ArrowRight size={13}/><span>{t("Dispatch")}</span><ArrowRight size={13}/><span>{t("Delivery")}</span></div></section>
           <section className={styles.backgroundPanel}><span className={styles.index}>{t("02 / Business records")}</span><h3>{t("An order-linked record")}</h3><div className={styles.businessRecord}><div className={styles.recordTitle}><ScanLine size={19}/><span>{t("ILLUSTRATIVE DELIVERY RECORD")}</span></div><strong>POD-DEMO-001</strong><dl><div><dt>{t("Order reference")}</dt><dd>DEMO-001</dd></div><div><dt>{t("Goods / quantity")}</dt><dd>{t("Industrial sensors × 100")}</dd></div><div><dt>{t("Recorded status")}</dt><dd className={styles.recordStatus}>{t("Delivery recorded")}</dd></div><div><dt>{t("Business source")}</dt><dd>{t("Warehouse service / ERP")}</dd></div></dl><p><ShieldCheck size={14}/>{t("Link the order. Verify the source.")}</p></div><p className={styles.backgroundCaption}>{t("Illustrative record · fields used in the demo.")}</p></section>
           <section className={styles.backgroundPanel}><span className={styles.index}>{t("03 / Authorized execution")}</span><h3>{t("An authorized trigger")}</h3><div className={styles.triggerPath}><div className={styles.adapterNode}><span>{t("BUSINESS ADAPTER")}</span><strong>{t("Authorized instruction")}</strong><p>{t("Bind the order, event and agreed terms.")}</p></div><ArrowRight size={20} className={styles.triggerArrow} aria-hidden="true"/><div className={styles.settlementNode}><span>◈</span><div><strong>TradeRail</strong><small>{t("Check terms and permissions. Settle on Monad.")}</small></div></div></div><p className={styles.backgroundCaption}>{t("Parties agree payment terms and permissions.")}</p></section>
         </div>
@@ -149,7 +150,7 @@ export function PitchDeck() {
         <div className={styles.heading}><span className={styles.kicker}>{t("TARGET ARCHITECTURE · CLEAR RESPONSIBILITIES")}</span><h2>{t(headlines[3])}</h2></div>
         <div className={styles.threeColumns}><div className={styles.editorialBlock}><span className={styles.index}>{t("01 / Enterprise")}</span><h3>{t("Goods verification stays with enterprises")}</h3><p>{t("ERP and consortium ledgers are alternative sources. An adapter turns trusted records into authorized settlement instructions.")}</p></div><div className={styles.editorialBlock}><span className={styles.index}>{t("02 / Authorization")}</span><h3>{t("A verifiable settlement instruction")}</h3><p>{t("Bind the business event to its order, parties, approved amount and expiry. Reject altered or repeated instructions.")}</p></div><div className={styles.editorialBlock}><span className={styles.index}>{t("03 / Monad")}</span><h3>{t("Execute and return a receipt")}</h3><p>{t("Direct payment goes to the supplier. Reverse factoring pays the purchase price and updates the payment recipient atomically.")}</p></div></div>
         <div className={styles.ruleStrip}><strong>{t("Two parties settle a trade. A third party supplies optional financing.")}</strong></div>
-        <div className={styles.businessLanes}><div><span>{t("2 PARTIES / TRADE PAYMENT")}</span><Flow items={["Goods shipped", "Buyer accepts goods", "Authorized buyer payment", "Supplier receives payment"]}/></div><div><span>{t("3 PARTIES / REVERSE FACTORING")}</span><Flow items={["Buyer approves payable", "Supplier receives early payment", "Buyer pays at maturity", "Financier receives maturity proceeds"]}/></div></div><div className={styles.actions}><Link className={styles.textLink} href="/">{t("Follow the full order in the demo")}<ArrowUpRight size={15}/></Link></div>
+        <div className={styles.businessLanes}><div><span>{t("2 PARTIES / TRADE PAYMENT")}</span><Flow items={["Goods shipped", "Buyer accepts goods", "Authorized buyer payment", "Supplier receives payment"]}/></div><div><span>{t("3 PARTIES / REVERSE FACTORING")}</span><Flow items={["Buyer approves payable", "Supplier receives early payment", "Buyer pays at maturity", "Financier receives maturity proceeds"]}/></div></div><div className={styles.actions}><Link className={styles.textLink} href={demoHref}>{t(published?'Run the demo':'Follow the full order in the demo')}<ArrowUpRight size={15}/></Link></div>
         <Note>{t("Premises: a trusted provider verifies goods; all parties authorize dollar-stablecoin settlement. Signatures prove authorization, not goods accuracy or guaranteed repayment.")}</Note>
       </>;
       case 4: return <>
@@ -208,7 +209,7 @@ export function PitchDeck() {
     }}>
       <div className={styles.track} style={{ transform: mobile ? undefined : `translateX(-${page * 100}%)` }}>
         {chapters.map((chapter, index) => <article key={chapter} id={`pitch-page-${index + 1}`} className={`${styles.slide} ${index === 0 ? styles.coverSlide : index === 1 ? styles.backgroundSlide : index === 2 ? styles.painSlide : index === 3 ? styles.architectureSlide : index === 4 ? styles.monadSlide : index === 5 ? styles.privacySlide : index === 6 ? styles.commercialSlide : ''}`} aria-label={`${t('Page')} ${index + 1}: ${t(chapter)}`} aria-hidden={!mobile && page !== index ? true : undefined} inert={!mobile && page !== index} ref={element => { slides.current[index] = element; }}>
-          <header className={styles.slideHeader}><Link href="/" aria-label={t('Open live demo')}><Boxes size={17} /><span>TRADERAIL <span className={styles.metaDivider}>/</span> {isLocal ? `${t('Local EVM')} · Anvil` : chain.name}</span></Link><span>{String(index + 1).padStart(2, '0')} / {String(chapters.length).padStart(2, '0')} <span className={styles.metaDivider}>·</span> {t(chapter)}</span></header>
+          <header className={styles.slideHeader}><Link href={demoHref} aria-label={t(published?'View the source':'Open live demo')}><Boxes size={17} /><span>TRADERAIL <span className={styles.metaDivider}>/</span> {published?'MONAD · OPEN SOURCE':networkName}</span></Link><span>{String(index + 1).padStart(2, '0')} / {String(chapters.length).padStart(2, '0')} <span className={styles.metaDivider}>·</span> {t(chapter)}</span></header>
           <div className={styles.content}>{content(index)}</div>
           <footer className={styles.slideFooter}><span>{t('Business recorded. Settlement verified.')}</span><span>{index === 0 ? t('Hackathon Pitch') : t(chapter)}</span></footer>
         </article>)}

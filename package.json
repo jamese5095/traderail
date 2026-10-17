@@ -12,7 +12,7 @@
     "preflight": "node scripts/preflight.mjs",
     "setup:testnet": "node scripts/setup-testnet.mjs",
     "dev": "npm run dev --workspace frontend",
-    "build": "npm run build --workspace frontend",
+    "build": "npm run build --workspace frontend && node scripts/stamp-web-build.mjs",
     "start": "node scripts/start.mjs",
     "typecheck": "npm run typecheck --workspace frontend",
     "test:contracts": "cd contracts && forge test -vv",
@@ -37,7 +37,14 @@
     "test:presentation": "node --experimental-strip-types --test scripts/presentation.test.ts",
     "phone": "node scripts/phone-gateway.mjs",
     "deploy:v4:monad": "node --env-file-if-exists=.env scripts/deploy-v4.mjs monadTestnet",
-    "test:v4": "node scripts/v4-smoke.mjs"
+    "test:v4": "node scripts/v4-smoke.mjs",
+    "demo:sandbox": "node scripts/run-demo-profile.mjs sandbox",
+    "setup:demo:testnet": "node scripts/setup-demo-testnet.mjs",
+    "demo:testnet": "node scripts/run-demo-profile.mjs testnet",
+    "build:pitch": "node scripts/build-pitch.mjs",
+    "test:profiles": "node --test scripts/demo-profiles.test.mjs",
+    "preview:pitch": "node scripts/preview-pitch.mjs",
+    "test:bootstrap": "node scripts/bootstrap-integration.mjs"
   },
   "engines": {
     "node": ">=22"

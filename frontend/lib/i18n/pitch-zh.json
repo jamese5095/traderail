@@ -230,5 +230,7 @@
   "Supplier receives payment": "供应商收到货款",
   "Supplier receives early payment": "供应商提前收款",
   "Buyer pays at maturity": "买方到期付款",
-  "Financier receives maturity proceeds": "资金方收到到期款项"
+  "Financier receives maturity proceeds": "资金方收到到期款项",
+  "Run the demo": "运行 Demo",
+  "View the source": "查看源码"
 }

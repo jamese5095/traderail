@@ -2,6 +2,15 @@
 
 当前首页是 V4。两方直接付款保留；三方模式采用整笔应收款折价购买。
 
+
+## 开源体验入口
+
+首次下载推荐 `npm ci` 后运行 `npm run demo:sandbox`（需要 Anvil），电脑打开 `http://localhost:3002`。程序自动准备账户、合约、测试币和授权。可以用两个浏览器窗口体验原来的双端流程，或者运行 `npm run phone -- --profile sandbox` 连接实体手机。
+
+真实 Monad 测试网体验使用 `npm run setup:demo:testnet`：自动生成专用账户，按提示向部署地址补充测试网 MON，再运行初始化并执行 `npm run demo:testnet`，打开 `http://localhost:3004`。这些配置与原有路演账户隔离。
+
+原有路演继续使用下面的 `npm run build`、`npm start` 与 `npm run phone`。完整配置与静态项目介绍发布说明见 [README](README.md#本地运行)。
+
 ## 启动
 
 ```sh

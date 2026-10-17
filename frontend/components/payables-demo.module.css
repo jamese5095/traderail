@@ -83,3 +83,5 @@
  .financier strong{grid-column:2;grid-row:1;margin:0;font-size:19px}
  .financier p{grid-column:2;grid-row:2;margin:0;text-align:right}
 }
+
+.readyTag{font-size:10px;white-space:nowrap}

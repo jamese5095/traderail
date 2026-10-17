@@ -24,3 +24,10 @@ screenshots
 /broadcast
 **/*.tsbuildinfo
 **/.DS_Store
+
+.traderail
+site/.next
+site/out
+site/public
+
+**/.next-*

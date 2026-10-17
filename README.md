@@ -6,7 +6,9 @@
 
 TradeRail 连接企业业务记录与公链资金执行：在可信业务事件和各方授权的基础上，用智能合约完成稳定币付款、应收款折价购买和到期结算，让参与方核验同一笔资金结果。
 
-当前版本为 Hackathon 测试网原型：本地电脑承担买方与资金方操作，手机承担供应商操作；仓储记录为模拟数据，资金转移使用真实 Monad Testnet 交易和无美元价值的 MockUSDC。
+当前版本为 Hackathon 原型，提供原有路演环境、无需手工配置钱包的本地 EVM 沙盒和自动准备账户的独立 Monad 测试网环境。电脑承担买方与资金方操作，手机或第二个浏览器窗口承担供应商操作。业务记录为模拟数据，资金动作通过所选链上的真实合约执行，MockUSDC 无美元价值。
+
+**在线项目介绍：[jamese5095.github.io/traderail](https://jamese5095.github.io/traderail/)**。GitHub Pages 展示七页双语介绍；交互 Demo 按下文在受控 Node.js 环境运行。
 
 
 [项目价值](#项目价值) · [两种业务模式](#两种业务模式) · [Why Monad](#why-monad) · [合约实现](#智能合约实现路径) · [启动](#本地运行) · [演示](#现场演示流程) · [测试](#验证与测试) · [隐私路线](#隐私与商业路线)
@@ -159,25 +161,23 @@ ERP 和联盟链是可替代的业务记录来源，不必二选一；当前没�
 5. 查询交易回执与 `finalized` 区块，成功后解析指定 MockUSDC 的 `Transfer` 日志。
 6. 前端据确认结果更新到账金额、收款方和动画。实时出块本身不代表该笔付款成功。
 
-相关实现：[`backend/settlement-v4/service.ts`](backend/settlement-v4/service.ts)、[`frontend/components/payables-demo.tsx`](frontend/components/payables-demo.tsx)。
+相关实现：[`backend/config/payables.ts`](backend/config/payables.ts)、[`backend/settlement-v4/service.ts`](backend/settlement-v4/service.ts)、[`frontend/components/payables-demo.tsx`](frontend/components/payables-demo.tsx)。
 
 ## 本地运行
 
-### 运行条件
+### 选择运行环境
 
-| 依赖 | 用途 |
-| --- | --- |
-| Node.js 22 或更高版本、npm | 安装工作区依赖、构建与运行 Next.js |
-| 可访问的 Monad Testnet RPC | 读取区块、广播交易与核验回执 |
-| 配置匹配的测试角色私钥与测试网 MON | 执行各方演示交易 |
-| Foundry 的 `forge` | 重新部署合约或运行 Solidity 测试时需要 |
-| `cloudflared`、可联网手机 | 实体手机跨设备 HTTPS 演示时需要 |
+| 环境 | 启动入口 | 默认地址 | 账户与资金 |
+| --- | --- | --- | --- |
+| 本地沙盒（推荐首次体验） | `npm run demo:sandbox` | `http://localhost:3002` | 自动使用本地开发账户、部署和准备测试资产，无需 `.env` 或 MON |
+| 独立 Monad 测试网 | 初始化后 `npm run demo:testnet` | `http://localhost:3004` | 自动生成五个专用账户，仅需向一个部署地址补充测试网 MON |
+| 原有路演 | `npm run build`、`npm start` | `http://localhost:3000` | 沿用当前路演部署及本机配置的专用角色 |
 
-**本地运行指应用运行在本机，当前 V4 连接 Monad Testnet（Chain ID `10143`），并非纯离线运行。**历史本地 EVM／V3 脚本不等于当前 V4 的启动路径。
+三套环境的账户、订单、会话、部署和前端构建分别存放。沙盒及个人测试网不会改写仓库中的路演部署 JSON，也不会读取其私钥作为自己的角色。环境由启动命令确定，页面明确标注所选网络。
 
-### 1. 安装依赖与配置环境
+### 1. 安装
 
-首次下载：
+需要 Node.js 22 的维护版本和 npm。本地沙盒还需要 Foundry 的 `anvil`；Solidity 合约测试需要 `forge`。独立测试网初始化使用 npm 自带的 Solidity 编译器，无需单独安装原生 solc。
 
 ```sh
 git clone https://github.com/jamese5095/traderail.git
@@ -185,74 +185,119 @@ cd traderail
 npm ci
 ```
 
-已经下载源码时，在项目根目录执行 `npm ci` 即可。
-
-首次配置时，把 `.env.example` 复制为 `.env`，填入专用测试角色。已有配置不要覆盖。实际部署角色的私钥不包含在交付包中。
-
-| 变量 | 当前用途 |
-| --- | --- |
-| `GUIDED_DEMO_ENABLED=true` | 显式启用受限的测试角色代签 |
-| `WAREHOUSE_PRIVATE_KEY` | 业务源提交交付摘要 |
-| `BUYER_PRIVATE_KEY` | 确认应付款、推进测试付款日、到期支付 |
-| `SUPPLIER_PRIVATE_KEY` | 接受应收款购买方案 |
-| `LENDER_PRIVATE_KEY` | 资金方报价、部署时准备代币授权 |
-| `DEPLOYER_PRIVATE_KEY` | 重新部署及测试资产准备 |
-| `RPC_URL` | V4 部署脚本的可选 RPC 覆盖 |
-| `TRADERAIL_RPC_URL` | V4 运行时的可选 RPC 覆盖 |
-| `DEMO_SESSION_DIR` | 可选的订单会话持久化目录 |
-
-`npm start` 会读取根 `.env` 和可选 `frontend/.env.local`；后者由开发者自行创建，不提供对应示例文件。运行时环境变量优先，避免同一角色在多处配置不同值。不要使用 `NEXT_PUBLIC_*` 保存私钥。
-
-使用已有部署时，四个业务签名角色必须匹配 `frontend/lib/payables-deployment.json`。复制项目并不会获得这些账户的签名能力；需要使用自己的角色时，应重新部署。
-
-### 2. 需要时，部署自己的 V4 测试环境
-
-先在 `.env` 配置部署者及四个不同角色的测试私钥，并准备 gas。部署者需要部署和准备交易的 MON；业务源、供应商也需要各自后续交易使用的 MON。脚本会按需从部署者补充买方／资金方 gas，不会替所有角色自动申请测试币。
+### 2. 零配置体验本地沙盒
 
 ```sh
-npm run deploy:v4:monad
+npm run demo:sandbox
 ```
 
-脚本编译合约，部署独立 MockUSDC 与协议，为买方和资金方铸造测试币并设置有上限的代币授权，然后更新：
+程序自动启动 Anvil、分配角色、编译部署当前合约、准备 MockUSDC 和有上限的授权，首次启动自动构建网页。打开 [http://localhost:3002](http://localhost:3002)。
 
-- `deployments/traderail-v4-monadTestnet.json`
-- `frontend/lib/payables-deployment.json`
-- `frontend/lib/payables-abi.json`
+点击「开始演示」→「连接供应商手机」→「在本机打开供应商端（测试）」，即可用两个浏览器窗口体验同样的角色流程，不必先准备手机或外部钱包。实体手机仍可通过下文的专用网关配对。
 
-部署会发送真实测试网交易并生成准备记录。它不部署官方 USDC，不提供真实美元资金。变更部署配置后，重新构建并启动应用。
+本地节点提供持续出块和成功交易的最终确认；页面不会把它标为 Monad 网络，也不以本地结果证明 Monad 性能。地址、区块和交易链接会打开当前本地链的只读 JSON 证明。
 
-### 3. 构建和启动
+Ctrl+C 结束当前启动器及其子进程，并保存本地链状态。再次启动恢复原环境。要从头重建自己的沙盒，先停止该实例，再执行：
+
+```sh
+npm run demo:sandbox -- --fresh
+```
+
+该命令仅清理沙盒生成的账户、部署、链状态和会话，不清理路演或个人测试网。启动器遇到已被占用的端口会停止并提示，不会杀掉其他进程。
+
+### 3. 自动准备独立 Monad 测试网环境
+
+```sh
+npm run setup:demo:testnet
+```
+
+首次运行在本机生成部署者、业务源、供应商、买方和资金方五个不同账户，只输出部署账户的**公开充值地址**、余额和保守初始化预算。余额不足时退出并提示补充测试网 MON；私钥不会打印。
+
+使用 [Monad 官方测试网水龙头](https://faucet.monad.xyz)或自己的测试账户向该地址补充 MON，再运行同一命令。也可使用等待模式，到账后自动继续：
+
+```sh
+npm run setup:demo:testnet -- --wait
+```
+
+初始化依次为四个业务角色分发 Gas、部署独立 MockUSDC 与协议、铸造测试币并完成授权。预算含角色余额储备，不等于实际手续费；链价格变化时可能仍需补充。脚本会保存已广播准备交易的哈希，重启时复用，不主动重复发送已记录步骤。
+
+如只想先生成账户与查看充值信息，不发送交易：
+
+```sh
+npm run setup:demo:testnet -- --prepare-only
+```
+
+部署完成后：
+
+```sh
+npm run demo:testnet
+```
+
+打开 [http://localhost:3004](http://localhost:3004)。该环境使用真实 Monad Testnet（Chain ID `10143`）；只有测试币，无美元价值。它不复用仓库公开地址所对应的私钥。
+
+可选 `TRADERAIL_SETUP_RPC` 指定该个人环境的 RPC；初始化会校验链 ID，拒绝把测试流程发到主网。
+
+### 4. 保留原有路演方式
+
+原来已配置的演示者继续使用：
 
 ```sh
 npm run build
 npm start
 ```
 
-| 入口 | 地址 |
-| --- | --- |
-| 电脑 Demo | [http://localhost:3000/](http://localhost:3000/) |
-| 七页双语项目介绍 | [http://localhost:3000/pitch](http://localhost:3000/pitch) |
-| 供应商页面 | `/supplier`，须通过本轮配对进入 |
-| 可打印货物标签 | [http://localhost:3000/goods](http://localhost:3000/goods) |
-| 当前 V4 链上证据 | Demo 主屏的「本笔完整证据」 |
+原有 `.env` 和可选 `frontend/.env.local` 仍被 `npm start` 读取；私钥需与 `frontend/lib/payables-deployment.json` 对应，且 `GUIDED_DEMO_ENABLED=true`。源码下载者不会获得这些角色的私钥，首次体验应使用沙盒或独立测试网入口。
 
-`/evidence` 和 `/operations` 等旧页面仍关联历史版本；核验当前订单请使用 V4 主屏入口。
+`npm run deploy:v4:monad` 作为原有手工部署脚本保留，会更新路演部署配置；一般开源测试请使用隔离的 `setup:demo:testnet`。
 
-### 4. 启动手机入口
+### 5. 手机 HTTPS 入口
 
-另开终端：
+需要本机安装 `cloudflared`。按正在运行的环境，在另一个终端执行对应命令：
 
 ```sh
+# 原有路演：电脑 3000，供应商网关 3001
 npm run phone
+
+# 本地沙盒：电脑 3002，供应商网关 3003
+npm run phone -- --profile sandbox
+
+# 独立测试网：电脑 3004，供应商网关 3005
+npm run phone -- --profile testnet
 ```
 
-脚本创建供应商专用网关与临时 HTTPS 隧道，输出手机入口。桌面生成的配对码自动读取当前入口。手机先用系统相机扫**配对码**进入供应商端，再在供应商页面扫**货物码**。
+手机先用系统相机扫电脑生成的**配对码**进入供应商端，再在供应商页面扫**货物码**。二维码和会话属于当前环境与当前订单，不能跨环境复用。
 
-网关仅转发供应商页面、必要静态资源和供应商 API，不开放桌面签名入口。配对码一次性使用、10 分钟有效，供应商会话最长 4 小时；新一轮重新配对。临时域名随进程变化，上台前检查实体手机可达性。
+网关只转发供应商页面、必要静态资源与只读证明，以及受认证的供应商操作，不开放桌面签名入口。配对码一次性使用、10 分钟有效，供应商会话最长 4 小时；新一轮重新配对。临时域名随进程变化，上台前用实体手机检查可达性。
 
-### 部署范围
+### 数据与配置位置
 
-当前支持受控 Node.js 主机运行；`npm start` 默认绑定本机地址，桌面代签 API 要求本机来源。仅把整个服务暴露到公网，不会获得安全的多租户产品。面向真实机构部署前，需要独立身份认证、机构签名／托管方案、数据持久化和权限设计。手机演示使用上述受限网关。
+```text
+.traderail/sandbox/        本地账户、合约部署、准备日志、Anvil 链状态和订单会话
+.traderail/testnet/        个人测试网账户、独立部署、准备日志和订单会话
+frontend/.demo-sessions/  原有路演会话（或 DEMO_SESSION_DIR 自定义目录）
+frontend/.next/           原有路演构建
+frontend/.next-sandbox/   沙盒构建
+frontend/.next-testnet/   个人测试网构建
+```
+
+上述生成目录均被 Git 和源码打包排除。账户文件权限为 `0600`，专用目录为 `0700`；不要公开、提交或把个人测试账户用于真实资产。正常启动保留已有账户，勿随意删除个人测试网账户文件。
+
+### 页面与部署范围
+
+每个运行地址下均提供 `/pitch` 双语项目介绍、`/goods` 可打印货物标签、`/supplier` 配对入口。V4 链上证据位于主屏「本笔完整证据」；旧 `/evidence`、`/operations` 仍关联历史版本。
+
+当前运行于受控 Node.js 主机。桌面代签 API 要求本机来源；不能靠把整个服务暴露到公网获得安全的多租户产品。生产机构接入还需要独立身份认证、签名／托管方案、持久化与机构权限设计。
+
+### GitHub Pages 项目介绍
+
+在线地址：[https://jamese5095.github.io/traderail/](https://jamese5095.github.io/traderail/)。静态站直接复用现有介绍页组件与中英文内容，保留翻页、总览和演讲模式；按钮指向仓库运行说明与源码。
+
+```sh
+npm run build:pitch
+npm run preview:pitch
+```
+
+本地静态预览为 `http://localhost:4173/traderail/`，输出目录为 `site/out/`。`.github/workflows/pages.yml` 在推送 `main` 后构建并部署 GitHub Pages。该产物没有钱包私钥、签名 API 或 Node.js 运行时。
 
 ## 现场演示流程
 
@@ -299,7 +344,14 @@ npm run phone
 ```sh
 npm run typecheck
 npm run build
+npm run test:profiles
 node --experimental-strip-types --test scripts/order-identity.test.ts
+```
+
+初始化集成测试（需要 Anvil，仅在一次性本地链上验证资金分发、部署和断点恢复，不使用公共测试网余额）：
+
+```sh
+npm run test:bootstrap
 ```
 
 当前 V4 合约测试（需要 Foundry）：
@@ -319,7 +371,13 @@ forge test --match-contract TradeRailPayablesTest -vv
 npm run test:v4
 ```
 
-该脚本会依次执行三方和双方流程，检查角色隔离、一次性配对、商品码、重复请求、转账及历史保留，并写入 `deployments/traderail-v4-rehearsal.json`。**它会发送真实测试网交易、消耗测试 gas 并产生订单记录**，不是只读验收。实体手机相机、隧道和现场网络仍需实际彩排。
+沙盒联调可在启动沙盒后运行（使用本地链，不发送公共测试网交易）：
+
+```sh
+DEMO_BASE_URL=http://localhost:3002 DEMO_RESULTS_PATH=.traderail/sandbox/rehearsal.json npm run test:v4
+```
+
+该脚本会依次执行三方和双方流程，检查角色隔离、一次性配对、商品码、重复请求、转账及历史保留。默认访问原有路演地址并写入 `deployments/traderail-v4-rehearsal.json`，可用 `DEMO_BASE_URL` 和 `DEMO_RESULTS_PATH` 指定隔离实例。**连接公共测试网时会发送交易、消耗测试 gas 并产生订单记录**，不是只读验收。实体手机相机、隧道和现场网络仍需实际彩排。
 
 ## 隐私与商业路线
 
@@ -330,6 +388,7 @@ npm run test:v4
 - 角色钱包、已确认资金动画、真实区块与交易证据展示。
 - 双语项目介绍、业务背景、Why Monad 和商业路线。
 - 本轮保留、下一轮新建及交易重试身份复用。
+- 自动本地沙盒、独立测试网账户与部署、环境检查和 GitHub Pages 静态介绍。
 
 ### 下一阶段
 
@@ -357,7 +416,9 @@ contracts/
   TradeRailPayables.sol    当前结算与应收款购买协议
   MockUSDC.sol            无美元价值的可铸造测试币
   test/                   Solidity 测试
-scripts/                  启动、手机网关、部署及测试
+scripts/                  启动、环境初始化、手机网关、部署及测试
+site/                     复用介绍页的 GitHub Pages 静态站
+.github/workflows/        Pages 构建与发布
 deployments/              公开部署配置
 ```
 
@@ -373,7 +434,10 @@ deployments/              公开部署配置
 | `POST /api/field/pair` | 手机兑换配对码，获得 HttpOnly 供应商会话 |
 | `GET /api/field` | 已配对手机读取当前订单 |
 | `POST /api/field` | 供应商入口提交交付／接受报价，不开放买方与资金方操作 |
-| `GET /api/blocks` | 读取真实网络区块；RPC 失败返回不可用状态 |
+| `GET /api/blocks` | 读取所选环境的真实区块；RPC 失败返回不可用状态 |
+| `GET /api/environment` | 只返回当前环境的公开网络与部署信息 |
+| `GET /api/readiness` | 本机检查签名配置、Gas、测试币余额和授权 |
+| `GET /api/proof` | 当前环境的只读区块、地址与交易 JSON 证明 |
 
 ## 常见问题
 
