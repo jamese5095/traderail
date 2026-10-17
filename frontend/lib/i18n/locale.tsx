@@ -40,7 +40,7 @@ export function LocaleProvider({ children, presentation=false }: { children: Rea
   }, []);
   useEffect(() => {
     document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
-    document.title = presentation||window.location.pathname==='/pitch'?(locale==='zh'?'TradeRail · 项目介绍':'TradeRail · Project Pitch'):window.location.pathname==='/evidence'?(locale==='zh'?'TradeRail · 业务事件与链上证据':'TradeRail · Business events and onchain evidence'):locale === 'zh' ? 'TradeRail · Monad 贸易结算' : 'TradeRail · Trade Settlement on Monad';
+    document.title = presentation?(locale==='zh'?'贸脉 TradeRail · 项目介绍':'贸脉 TradeRail · Project Pitch'):window.location.pathname==='/pitch'?(locale==='zh'?'TradeRail · 项目介绍':'TradeRail · Project Pitch'):window.location.pathname==='/evidence'?(locale==='zh'?'TradeRail · 业务事件与链上证据':'TradeRail · Business events and onchain evidence'):locale === 'zh' ? 'TradeRail · Monad 贸易结算' : 'TradeRail · Trade Settlement on Monad';
   }, [locale,presentation]);
   const setLocale = useCallback((next: Locale) => {
     updateLocale(next);

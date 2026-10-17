@@ -380,3 +380,7 @@
   .monadSlide .index { margin-bottom: 9px; }
   .monadSlide .ruleStrip { padding: 10px 17px; }
 }
+
+/* Bilingual branding for the published project introduction. */
+.caseWordmark .chineseWordmark { display: inline-block; font-size: .48em; letter-spacing: .04em; margin-right: .38em; vertical-align: .12em; }
+.miniWordmark .miniChineseWordmark { display: block; font-size: .45em; line-height: 1.4; letter-spacing: .08em; color: var(--accent); }
