@@ -1,0 +1,48 @@
+{
+  "name": "traderail",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "demo": "node scripts/local-demo.mjs",
+    "demo:fresh": "node scripts/local-demo.mjs --fresh",
+    "preflight": "node scripts/preflight.mjs",
+    "setup:testnet": "node scripts/setup-testnet.mjs",
+    "dev": "npm run dev --workspace frontend",
+    "build": "npm run build --workspace frontend",
+    "start": "node scripts/start.mjs",
+    "typecheck": "npm run typecheck --workspace frontend",
+    "test:contracts": "cd contracts && forge test -vv",
+    "deploy:local": "node scripts/deploy.mjs local",
+    "deploy:monad": "node --env-file-if-exists=.env scripts/deploy.mjs monadTestnet",
+    "test:integration": "node scripts/guided-smoke.mjs",
+    "test:repeat": "node scripts/guided-smoke.mjs --rounds=3",
+    "fund:testnet": "node --env-file-if-exists=.env scripts/fund-testnet.mjs",
+    "select:local": "node --env-file-if-exists=.env scripts/select-network.mjs local",
+    "select:monad": "node --env-file-if-exists=.env scripts/select-network.mjs monadTestnet",
+    "test:testnet": "node scripts/guided-smoke.mjs --testnet",
+    "test:guided": "node scripts/guided-smoke.mjs",
+    "demo:v3": "node scripts/run-v3-local.mjs",
+    "demo:v3:fresh": "node scripts/run-v3-local.mjs --fresh",
+    "deploy:v3:local": "node scripts/deploy-v3.mjs local",
+    "deploy:v3:monad": "node --env-file-if-exists=.env scripts/deploy-v3.mjs monadTestnet",
+    "setup:v3": "node scripts/setup-v3.mjs",
+    "test:v3": "node scripts/v3-smoke.mjs",
+    "preflight:v3": "node scripts/preflight-v3.mjs",
+    "select:v3:local": "node scripts/select-v3.mjs local",
+    "select:v3:monad": "node scripts/select-v3.mjs monadTestnet",
+    "test:presentation": "node --experimental-strip-types --test scripts/presentation.test.ts",
+    "phone": "node scripts/phone-gateway.mjs",
+    "deploy:v4:monad": "node --env-file-if-exists=.env scripts/deploy-v4.mjs monadTestnet",
+    "test:v4": "node scripts/v4-smoke.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "solc": "0.8.28"
+  }
+}

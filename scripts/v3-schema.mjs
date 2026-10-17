@@ -1,0 +1,3 @@
+export const termTypes = { Terms: [ ['id','bytes32'],['mode','uint8'],['buyer','address'],['supplier','address'],['lender','address'],['amount','uint256'],['principal','uint256'],['interest','uint256'],['notBefore','uint256'],['expiresAt','uint256'] ].map(([name,type])=>({name,type})) };
+export const eventTypes = { BusinessEvent: [ ['orderId','bytes32'],['eventId','bytes32'],['termsHash','bytes32'],['recordCommitment','bytes32'],['action','uint8'],['nonce','uint256'],['expiresAt','uint256'] ].map(([name,type])=>({name,type})) };
+export const railDomain = (chainId,protocol) => ({ name:'TradeRail',version:'3',chainId,verifyingContract:protocol });

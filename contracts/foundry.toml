@@ -1,0 +1,13 @@
+[profile.default]
+src = "."
+test = "test"
+script = "script"
+out = "out"
+libs = []
+solc = "../scripts/solc.cjs"
+evm_version = "cancun"
+optimizer = true
+optimizer_runs = 200
+
+[fuzz]
+runs = 256

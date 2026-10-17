@@ -1,0 +1,34 @@
+{
+  "name": "@traderail/frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --webpack -H 127.0.0.1",
+    "build": "next build --webpack",
+    "start": "node ../scripts/start.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.90.0",
+    "@zxing/browser": "^0.2.1",
+    "@zxing/library": "^0.21.3",
+    "lucide-react": "^0.577.0",
+    "next": "16.4.0",
+    "qrcode": "^1.5.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "server-only": "0.0.1",
+    "viem": "2.57.3",
+    "wagmi": "^2.19.5",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "^24.10.0",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "^5.9.3"
+  }
+}

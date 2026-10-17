@@ -1,0 +1,26 @@
+node_modules
+**/node_modules
+**/.next
+.env
+**/.env
+**/.env.*
+!**/.env.example
+**/.env.local
+**/.env.*.local
+contracts/out
+contracts/cache
+contracts/broadcast
+*.log
+screenshots
+
+**/.demo-sessions
+**/.demo-chain
+
+**/.demo-chain-v3
+
+# Disposable compiler output and local incremental state
+/out
+/cache
+/broadcast
+**/*.tsbuildinfo
+**/.DS_Store

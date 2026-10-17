@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "protocolVersion": 4,
+  "demoOnly": true,
+  "network": "monadTestnet",
+  "chainId": 10143,
+  "protocol": "0xa932a00d497d0270b1186a97a911dc05a8c37d7a",
+  "usdc": "0x751e9670cbd7071f66ea654b34410deac24da898",
+  "relayer": "0x5BC09c33919073017Ff0D56D71bC3eA8056090D4",
+  "source": "0x53703943eA40A06F6C71F60da13d4F36758C2c19",
+  "supplier": "0x7157F8c8646A09D9ac2558050df6bb041a357600",
+  "buyer": "0x517a252a730293B24A9C25b8413c5490BB470efE",
+  "lender": "0x4Fc850Bbf7D4c5C990B03fD7d7392580FfBEc149",
+  "deploymentBlock": "71196893",
+  "deploymentBlockHash": "0x5b77b4d3a2d3c183c25e9dc2002c3c477ba655da1ce37e8fe1f6fbde8bff6703",
+  "rpcUrl": "https://rpc-testnet.monadinfra.com",
+  "preparations": []
+}

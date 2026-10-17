@@ -1,0 +1,18 @@
+{
+  "local": {
+    "id": 31337,
+    "name": "Local EVM · Anvil",
+    "rpcUrl": "http://127.0.0.1:8545",
+    "explorerUrl": "",
+    "currency": "ETH",
+    "testnet": true
+  },
+  "monadTestnet": {
+    "id": 10143,
+    "name": "Monad Testnet",
+    "rpcUrl": "https://testnet-rpc.monad.xyz",
+    "explorerUrl": "https://testnet.monadscan.com",
+    "currency": "MON",
+    "testnet": true
+  }
+}

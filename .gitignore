@@ -1,0 +1,33 @@
+node_modules/
+.next/
+.env
+.env.local
+.env.*.local
+contracts/cache/
+contracts/out/
+contracts/broadcast/
+*.log
+*.tsbuildinfo
+.DS_Store
+
+.demo-sessions/
+frontend/.demo-sessions/
+.demo-chain/
+
+# Root-level Foundry artifacts from direct test commands
+/out/
+/cache/
+/broadcast/
+
+.demo-chain-v3/
+
+# Every environment variant stays local; only checked placeholders are shareable.
+.env.*
+!.env.example
+
+# Rehearsal results and runtime evidence stay local.
+deployments/archive/
+deployments/*rehearsal*.json
+deployments/*receipt*.json
+deployments/*preflight*.json
+*.tmp

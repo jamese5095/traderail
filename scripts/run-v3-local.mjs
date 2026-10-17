@@ -1,0 +1,13 @@
+import {spawn,spawnSync}from'node:child_process';import{readFileSync,existsSync,mkdirSync,renameSync,copyFileSync}from'node:fs';import{fileURLToPath}from'node:url';
+const root=fileURLToPath(new URL('../',import.meta.url));const folder=root+'.demo-chain-v3';mkdirSync(folder,{recursive:true});const state=folder+'/local-state.json';const meta=root+'deployments/traderail-v3-local.json';const delay=ms=>new Promise(r=>setTimeout(r,ms));let anvil,next,stopping=false;
+async function rpc(method,params=[]){const r=await fetch('http://127.0.0.1:8546',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params}),signal:AbortSignal.timeout(2000)});const j=await r.json();if(j.error)throw Error(j.error.message);return j.result;}
+async function stop(){if(stopping)return;stopping=true;for(const child of [next,anvil]){if(child&&child.exitCode===null){const end=new Promise(r=>child.once('exit',r));child.kill('SIGTERM');await Promise.race([end,delay(8000)]);}}process.exit();}process.on('SIGINT',stop);process.on('SIGTERM',stop);
+try{try{await rpc('eth_chainId');throw Error('V3 local port 8546 is already in use');}catch(e){if(e.message.includes('already'))throw e;}
+ if(process.argv.includes('--fresh')&&existsSync(state)){renameSync(state,folder+'/archived-'+Date.now()+'.json');}
+ anvil=spawn('anvil',['--host','127.0.0.1','--port','8546','--chain-id','31337','--silent','--state',state,'--state-interval','30'],{cwd:root,stdio:['ignore','ignore','inherit']});
+ let ready=false;for(let i=0;i<80;i++){try{await rpc('eth_chainId');ready=true;break;}catch{await delay(250);}}if(!ready)throw Error('Local V3 chain did not start');
+ let resume=false;if(existsSync(meta)&&!process.argv.includes('--fresh')){const d=JSON.parse(readFileSync(meta));const block=await rpc('eth_getBlockByNumber',['0x'+BigInt(d.deploymentBlock).toString(16),false]);if(block?.hash===d.deploymentBlockHash&&(await rpc('eth_getCode',[d.protocol,'latest']))!=='0x'){copyFileSync(meta,root+'frontend/lib/traderail-deployment.json');resume=true;}}
+ if(!resume){const d=spawnSync(process.execPath,['scripts/deploy-v3.mjs','local'],{cwd:root,stdio:'inherit'});if(d.status!==0)throw Error('V3 deployment failed');}
+ console.log(resume?'Resumed V3 local chain and historical orders':'Created a separate V3 local deployment');
+ next=spawn(process.execPath,[root+'node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port',process.env.PORT??'3000'],{cwd:root+'frontend',stdio:'inherit',env:{...process.env,GUIDED_DEMO_ENABLED:'true',NEXT_TELEMETRY_DISABLED:'1'}});next.on('exit',stop);console.log('TradeRail local demo ready. Ctrl+C saves chain state.');
+}catch(e){console.error(e.message);process.exitCode=1;await stop();}
