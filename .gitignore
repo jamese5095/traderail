@@ -39,3 +39,9 @@ site/out/
 site/public/
 
 .next-*/
+
+# Private presenter materials are maintained outside the repository.
+/ROADSHOW*.md
+/PRESENTATION-V4.md
+/DEMO-V4.md
+/presenter-private/

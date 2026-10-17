@@ -31,3 +31,9 @@ site/out
 site/public
 
 **/.next-*
+
+# Exclude private presenter materials from build contexts.
+ROADSHOW*.md
+PRESENTATION-V4.md
+DEMO-V4.md
+presenter-private
