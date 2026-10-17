@@ -1,6 +1,6 @@
 // Real TESTNET rehearsal. Uses mock tokens, retains receipts; never prints cookies or signed payloads.
 import assert from 'node:assert/strict';import {writeFileSync} from 'node:fs';import {randomUUID} from 'node:crypto';
-const base=process.env.DEMO_BASE_URL||'http://localhost:3000';let cookie='';
+const base=process.env.DEMO_BASE_URL||'http://localhost:3003';let cookie='';
 async function call(path,body,phone=false,expected=200){const r=await fetch(base+path,{method:body?'POST':'GET',headers:{...(body?{'Content-Type':'application/json'}:{}),...(phone?{cookie}:{})},body:body?JSON.stringify(body):undefined});const d=await r.json();assert.equal(r.status,expected,d.error);return {d,r};}
 async function state(){return(await call('/api/payables')).d;}
 async function wait(step){for(let i=0;i<70;i++){const s=await state();const op=s.order.operations[step];if(op?.state==='confirmed')return s;assert.notEqual(op?.state,'failed');await new Promise(r=>setTimeout(r,1500));}throw Error('Timed out awaiting '+step);}

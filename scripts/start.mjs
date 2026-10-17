@@ -19,7 +19,7 @@ const env = { ...(existsSync(rootEnv) ? parseEnv(readFileSync(rootEnv, 'utf8')) 
 cpSync(resolve(frontend,dist,'static'), resolve(standalone,dist,'static'), { recursive: true });
 if (existsSync(resolve(frontend, 'public'))) cpSync(resolve(frontend, 'public'), resolve(standalone, 'public'), { recursive: true });
 const child = spawn(process.execPath, [resolve(standalone, 'server.js')], {
-  cwd: frontend, stdio: 'inherit', env: { ...env, NODE_ENV: 'production', HOSTNAME: env.HOSTNAME || '127.0.0.1', PORT: env.PORT || '3000',
+  cwd: frontend, stdio: 'inherit', env: { ...env, NODE_ENV: 'production', HOSTNAME: env.HOSTNAME || '127.0.0.1', PORT: env.PORT || '3003',
     DEMO_SESSION_DIR: env.TRADERAIL_PROFILE && env.TRADERAIL_PROFILE !== 'showcase' ? resolve(env.TRADERAIL_PROFILE_DIR || resolve(root,'.traderail',env.TRADERAIL_PROFILE), 'sessions') : env.DEMO_SESSION_DIR || resolve(frontend, '.demo-sessions'), NEXT_TELEMETRY_DISABLED: '1' },
 });
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => child.kill(signal));

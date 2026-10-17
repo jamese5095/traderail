@@ -45,7 +45,8 @@
     "test:profiles": "node --test scripts/demo-profiles.test.mjs",
     "preview:pitch": "node scripts/preview-pitch.mjs",
     "test:bootstrap": "node scripts/bootstrap-integration.mjs",
-    "setup:showcase:loan": "node scripts/setup-showcase-loan.mjs"
+    "setup:showcase:loan": "node scripts/setup-showcase-loan.mjs",
+    "test:terms": "node --experimental-strip-types --test tests/payables-terms.test.ts"
   },
   "engines": {
     "node": ">=22"

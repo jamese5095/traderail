@@ -11,11 +11,13 @@ TradeRail 连接企业业务记录与公链资金执行：在可信业务事件�
 **在线项目介绍：[jamese5095.github.io/traderail](https://jamese5095.github.io/traderail/)**。GitHub Pages 展示七页双语介绍；交互 Demo 按下文在受控 Node.js 环境运行。
 
 
-[项目价值](#项目价值) · [两种业务模式](#两种业务模式) · [Why Monad](#why-monad) · [合约实现](#智能合约实现路径) · [启动](#本地运行) · [测试](#验证与测试) · [隐私路线](#隐私与商业路线)
+[项目价值](#项目价值) · [两种业务模式](#两种业务模式) · [方案配置](#智能合约方案配置) · [Why Monad](#why-monad) · [合约实现](#智能合约实现路径) · [启动](#本地运行) · [测试](#验证与测试) · [隐私路线](#隐私与商业路线)
 
 ## 界面预览
 
-当前 Demo 支持双方直接付款与三方部分贷款。主屏将资金动画和本笔完整链上证据放在同一页面。
+当前 Demo 从智能合约方案配置开始：选择双方直接付款或三方部分贷款，自定义货款、本金与利息，并实时预览资金分配。确认后进入手机配对、交付凭证和资金执行流程；主屏将资金动画与本笔完整链上证据放在同一页面。
+
+![TradeRail 智能合约方案配置](screenshots/contract-configurator.png)
 
 ![TradeRail 部分贷款测试网核验视图](screenshots/partial-loan-verified.png)
 
@@ -71,6 +73,18 @@ TradeRail 提供结算规则与接入能力，**不自行提供贷款资金**。
 供应商分两次累计收到 99,000（贷款 50,000 + 尾款 49,000）。资金方收回本金 50,000 并取得利息 1,000；该利息是本例固定金额，不是年化利率。协议不会自行提供本金，也不保证买方到期偿付。贷款及应收款权利的法律安排需要在线下完成。
 
 当前合约版本为 **5**。为兼容既有 API 和测试脚本命名，内部模式键 `factoring`、操作键 `quote` / `purchase` 仍分别表示三方贷款、贷款方案和借款；链上调用已经改为 `offerLoan` / `drawLoan`，不再表示折价购买整笔应收款。
+
+## 智能合约方案配置
+
+用户在第一笔链上操作前选择双方或三方结构，并设置每笔订单的货款、本金和利息。该功能复用现有协议合约，为订单生成参数配置；不会为每笔交易编写 Solidity 或部署新的合约地址。
+
+- 默认货款 **100,000**、本金 **50,000**、利息 **1,000 MockUSDC**；双方模式只需要货款金额。
+- 货款最高 **1,000,000 MockUSDC**，最多六位小数；贷款本金须大于零且小于货款，本息合计不得超过货款。
+- 预览自动计算资金方本息、供应商尾款及累计到账；桌面、手机、合约调用共用已保存的金额。
+- 未提交链上交易前可重新配置；首次提交后模式与金额锁定。付款账期仍为 60 天，贷款方案有效期为 24 小时。
+- 生成配置只创建本地订单草稿；后续业务操作才发送链上交易。新订单使用随机链上 ID，避免展示编号重复造成冲突。
+
+金额按六位精度转为整数最小单位，前后端均校验，提交前还执行链上预检。参数配置不会自动准备余额或代币授权，参与方仍需准备相应资金。实现说明见 [CONFIGURATOR.md](CONFIGURATOR.md)。
 
 ## Why Monad
 
@@ -167,7 +181,7 @@ ERP 和联盟链是可替代的业务记录来源，不必二选一；当前没�
 | --- | --- | --- | --- |
 | 本地沙盒（推荐首次体验） | `npm run demo:sandbox` | `http://localhost:3002` | 自动使用本地开发账户、部署和准备测试资产，无需 `.env` 或 MON |
 | 独立 Monad 测试网 | 初始化后 `npm run demo:testnet` | `http://localhost:3004` | 自动生成五个专用账户，仅需向一个部署地址补充测试网 MON |
-| 预配置环境 | `npm run build`、`npm start` | `http://localhost:3000` | 沿用预配置部署及本机配置的专用角色 |
+| 预配置环境 | `npm run build`、`npm start` | `http://localhost:3003` | 沿用预配置部署及本机配置的专用角色 |
 
 升级提示：V5 部分贷款合约与旧版应收款购买合约不兼容。已有旧沙盒的用户可停止服务后运行 `npm run demo:sandbox -- --fresh` 重新初始化；已有个人测试网环境请保留原目录，通过 `TRADERAIL_PROFILE_DIR` 指定新的独立目录重新准备账户和部署，不覆盖旧记录。
 
@@ -191,7 +205,7 @@ npm run demo:sandbox
 
 程序自动启动 Anvil、分配角色、编译部署当前合约、准备 MockUSDC 和有上限的授权，首次启动自动构建网页。打开 [http://localhost:3002](http://localhost:3002)。
 
-点击「开始演示」→「连接供应商手机」→「在本机打开供应商端（测试）」，即可用两个浏览器窗口体验同样的角色流程，不必先准备手机或外部钱包。实体手机仍可通过下文的专用网关配对。
+选择结算方案与金额 →「生成结算方案，进入演示」→「连接供应商手机」→「在本机打开供应商端（测试）」，即可用两个浏览器窗口体验同样的角色流程，不必先准备手机或外部钱包。实体手机仍可通过下文的专用网关配对。
 
 本地节点提供持续出块和成功交易的最终确认；页面不会把它标为 Monad 网络，也不以本地结果证明 Monad 性能。地址、区块和交易链接会打开当前本地链的只读 JSON 证明。
 
@@ -241,8 +255,10 @@ npm run demo:testnet
 
 ```sh
 npm run build
-npm start
+PORT=3003 npm start
 ```
+
+打开 [http://localhost:3003/?configure=1](http://localhost:3003/?configure=1) 进入方案配置页；后续可从当前订单的「修改结算方案」返回（提交链上交易前），或结清后配置下一笔交易。
 
 原有 `.env` 和可选 `frontend/.env.local` 仍被 `npm start` 读取；私钥需与 `frontend/lib/payables-deployment.json` 对应，且 `GUIDED_DEMO_ENABLED=true`。源码下载者不会获得这些角色的私钥，首次体验应使用沙盒或独立测试网入口。
 
@@ -253,8 +269,8 @@ npm start
 需要本机安装 `cloudflared`。按正在运行的环境，在另一个终端执行对应命令：
 
 ```sh
-# 预配置环境：电脑 3000，供应商网关 3001
-npm run phone
+# 预配置环境：电脑 3003，供应商网关 3005
+PORT=3003 PHONE_GATEWAY_PORT=3005 npm run phone
 
 # 本地沙盒：电脑 3002，供应商网关 3003
 npm run phone -- --profile sandbox
@@ -262,6 +278,8 @@ npm run phone -- --profile sandbox
 # 独立测试网：电脑 3004，供应商网关 3005
 npm run phone -- --profile testnet
 ```
+
+每次只启动与当前网页对应的网关；同时运行多个环境时，可通过 `PORT` 与 `PHONE_GATEWAY_PORT` 指定不冲突的端口。
 
 手机先用系统相机扫电脑生成的**配对码**进入供应商端，再在供应商页面扫**货物码**。二维码和会话属于当前环境与当前订单，不能跨环境复用。
 
@@ -313,12 +331,15 @@ npm run preview:pitch
 
 ## 验证与测试
 
+`test:terms` 验证六位小数精度、分账计算、非法金额与贷款边界。自定义金额的两种完整流程集成测试见 [CONFIGURATOR.md](CONFIGURATOR.md#隔离集成测试)，仅向一次性本地 EVM 发送交易。
+
 先安装 npm 依赖。以下检查不需要发送链上交易：
 
 ```sh
 npm run typecheck
 npm run build
 npm run test:profiles
+npm run test:terms
 node --experimental-strip-types --test scripts/order-identity.test.ts
 ```
 
@@ -328,7 +349,7 @@ node --experimental-strip-types --test scripts/order-identity.test.ts
 npm run test:bootstrap
 ```
 
-当前 V4 合约测试（需要 Foundry）：
+当前 V5 合约测试（需要 Foundry）：
 
 ```sh
 cd contracts
@@ -403,7 +424,7 @@ deployments/              公开部署配置
 | 接口 | 用途与权限 |
 | --- | --- |
 | `GET /api/payables` | 本机电脑读取订单、历史和公开部署信息 |
-| `POST /api/payables` | 本机创建、草稿切换模式、执行对应步骤 |
+| `POST /api/payables` | 本机创建、修改草稿模式与金额、执行对应步骤 |
 | `POST /api/payables/pair` | 本机生成本轮一次性配对码 |
 | `POST /api/field/pair` | 手机兑换配对码，获得 HttpOnly 供应商会话 |
 | `GET /api/field` | 已配对手机读取当前订单 |

@@ -16,7 +16,7 @@ if(local&&!['127.0.0.1','localhost','[::1]'].includes(new URL(payMeta.rpcUrl).ho
 export const payRpc=payProfile==='showcase'?(process.env.TRADERAIL_RPC_URL||payMeta.rpcUrl):payMeta.rpcUrl;
 export const payChain=defineChain({id:payMeta.chainId,name:local?'Local EVM · Anvil':'Monad Testnet',nativeCurrency:{name:local?'ETH':'MON',symbol:local?'ETH':'MON',decimals:18},rpcUrls:{default:{http:[payRpc]}},testnet:true});
 export const paySessionDir=payProfile==='showcase'?(process.env.DEMO_SESSION_DIR??resolve(process.cwd(),'.demo-sessions')):join(profileDir,'sessions');
-export const payPort=Number(process.env.PORT??(payProfile==='sandbox'?3002:payProfile==='testnet'?3004:3000));
+export const payPort=Number(process.env.PORT??(payProfile==='sandbox'?3002:payProfile==='testnet'?3004:3003));
 export const payOrigin=`http://localhost:${payPort}`;
 export function payKey(role:'buyer'|'supplier'|'lender'|'source'):Hex {
  if(payProfile==='showcase')return process.env[{buyer:'BUYER_PRIVATE_KEY',supplier:'SUPPLIER_PRIVATE_KEY',lender:'LENDER_PRIVATE_KEY',source:'WAREHOUSE_PRIVATE_KEY'}[role]] as Hex;

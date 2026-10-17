@@ -1,5 +1,6 @@
+import type {PayTerms} from './payables-terms';
 export type PayMode='direct'|'factoring';
 export type PayStep='deliver'|'approve'|'quote'|'purchase'|'mature'|'settle';
 export type PayOperation={step:PayStep;state:'submitted'|'confirming'|'confirmed'|'failed'|'unknown';hash:string;block?:string;gasUsed?:string;submittedAt:string;confirmedAt?:string;transfers?:{from:string;to:string;amount:string}[]};
-export type PayOrder={id:string;chainOrderId?:string;mode:PayMode;createdAt:string;document:{id:string;goods:string;quantity:number;source:string;hash:string};dueAt?:number;operations:Partial<Record<PayStep,PayOperation>>;next:PayStep|'complete';paired:boolean;lastSeen?:number;approved:boolean;funded:boolean;settled:boolean;demoMatured:boolean};
+export type PayOrder={id:string;chainOrderId?:string;mode:PayMode;terms?:PayTerms;createdAt:string;document:{id:string;goods:string;quantity:number;source:string;hash:string};dueAt?:number;operations:Partial<Record<PayStep,PayOperation>>;next:PayStep|'complete';paired:boolean;lastSeen?:number;approved:boolean;funded:boolean;settled:boolean;demoMatured:boolean};
 export type PaySnapshot={order:PayOrder|null;history:{id:string;mode:PayMode;settled:boolean}[];deployment:{protocol:string;usdc:string;buyer:string;supplier:string;lender:string;chainId:number;network:string;profile:'showcase'|'sandbox'|'testnet';networkName:string;currency:string;explorerUrl:string};readiness?:{buyer:string;lender:string};};

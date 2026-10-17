@@ -7,7 +7,7 @@ import {resolve} from 'node:path';
 import {directory,webPort} from './lib/demo-profile.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const arg=process.argv.indexOf('--profile');const profile=arg>=0?process.argv[arg+1]:'showcase';if(!['showcase','sandbox','testnet'].includes(profile))throw Error('Unsupported profile');
-const appPort=profile==='showcase'?3000:webPort(profile);const gatewayPort=appPort+1;const sessionDir=profile==='showcase'?resolve(root,'frontend/.demo-sessions'):resolve(directory(profile),'sessions');const file=resolve(sessionDir,'phone-origin.json');mkdirSync(sessionDir,{recursive:true,mode:0o700});
+const appPort=Number(process.env.PORT??(profile==='showcase'?3003:webPort(profile)));const gatewayPort=Number(process.env.PHONE_GATEWAY_PORT??(appPort===3003?3005:appPort+1));const sessionDir=profile==='showcase'?resolve(process.env.DEMO_SESSION_DIR||resolve(root,'frontend/.demo-sessions')):resolve(directory(profile),'sessions');const file=resolve(sessionDir,'phone-origin.json');mkdirSync(sessionDir,{recursive:true,mode:0o700});
 const budgets=new Map();
 const server=http.createServer((req,res)=>{
  const path=new URL(req.url,'http://localhost').pathname;

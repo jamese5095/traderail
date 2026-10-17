@@ -21,6 +21,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run test:profiles
+      - run: npm run test:terms
+      - run: npm run build
       - run: npm run build:pitch
       - uses: actions/upload-pages-artifact@v3
         with:
